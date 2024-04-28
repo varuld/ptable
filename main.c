@@ -23,7 +23,6 @@ Last modified : 24/07/2023 - ESC KEY ADDED
 #include "global.h"
 #include "string.h"
 #include "ctype.h"
-#define MAX_LINE_LENGTH 1000
 /*====================================================================*/
 /* GLOBAL VARIABLES */
 /*====================================================================*/
@@ -42,9 +41,9 @@ int currentPointer = 0, oldPointer = 0, oldElement = 0, currentDirection = 0;
 size_t animation = 0;
 int centerX = 0;
 int status = 0;
-char titlemsg[18] = "|PERIODIC TABLE|";
+char titlemsg[NO_OF_GRUPS] = "|PERIODIC TABLE|";
 char elementText[MAXTEXT];
-int table[162] = {
+int table[TABLESIZE] = {
 	1, 1, 1, 1, 1, 1, 1, 0, 0,
 	0, 1, 1, 1, 1, 1, 1, 0, 0,
 	0, 0, 0, 1, 1, 1, 1, 0, 0,
@@ -248,6 +247,16 @@ BOOL displaytable = TRUE;
 int new_rows = 0, new_columns = 0, old_rows = 0, old_columns = 0;	// Terminal dimensions
 
 /*====================================================================*/
+/* CONSTANTS							      */
+/*====================================================================*/
+
+
+/*====================================================================*/
+/* UTIL MACROS							      */
+/*====================================================================*/
+#define A_HALF_OF(n) ((n) / (2))
+
+/*====================================================================*/
 /* PROTOTYPES OF FUNCTIONS                                            */
 /*====================================================================*/
 
@@ -301,16 +310,16 @@ centerX = ((new_columns) / 2) - (strlen(titlemsg) / 2);
 draw_screen();
 //Check whether screen is big enough; if not, display error.    
  if ((new_columns < MINWIDTH) || (new_rows < MINHEIGHT)) {
-	/*draw_window(screen1, (new_columns / 2) - 13, (new_rows / 2) - 2,
-		    (new_columns / 2) + 13, (new_rows / 2) + 2, B_WHITE,
+	/*draw_window(screen1, (A_HALF_OF(new_columns)) - 13, (A_HALF_OF(new_rows)) - 2,
+		    (A_HALF_OF(new_columns)) + 13, (A_HALF_OF(new_rows)) + 2, B_WHITE,
 		    F_BLACK, B_RED, 1, 1, 1, 0);
-	write_str(screen1, (new_columns / 2) - 12, (new_rows / 2) - 2,
+	write_str(screen1, (A_HALF_OF(new_columns)) - 12, (A_HALF_OF(new_rows)) - 2,
 		  WINERRMSGTL, B_RED, F_WHITE, 0);
-	write_str(screen1, (new_columns / 2) - 12, (new_rows / 2) - 1,
+	write_str(screen1, (A_HALF_OF(new_columns)) - 12, (A_HALF_OF(new_rows)) - 1,
 		  WINERRMSGLN1, B_WHITE, F_BLACK, 0);
-	write_str(screen1, (new_columns / 2) - 12, (new_rows / 2),
+	write_str(screen1, (A_HALF_OF(new_columns)) - 12, (A_HALF_OF(new_rows)),
 		  WINERRMSGLN2, B_WHITE, F_BLACK, 0);
-	write_str(screen1, (new_columns / 2) - 12, (new_rows / 2) + 1,
+	write_str(screen1, (A_HALF_OF(new_columns)) - 12, (A_HALF_OF(new_rows)) + 1,
 		  WINERRMSGLN3, B_WHITE, F_BLACK, 0);
 	displaytable = FALSE;
 	old_rows = new_rows;
@@ -610,7 +619,7 @@ int track_rows = 0;
 int i = 0;
 //Shifty helps to separate the last 2 rows of the table
 int shifty = 0;
-int centerTableX = (new_columns / 2) - 54;
+int centerTableX = (A_HALF_OF(new_columns)) - 54;
 int counterElement = 0;
 int counterAtomic = 0;
 
@@ -640,7 +649,7 @@ for (i = 0; i < TABLESIZE; i++) {
 				    centerTableX + track_columns,
 				    5 + (3 * track_rows) + shifty,
 				    centerTableX + 5 + track_columns,
-				    7 + (3 * track_rows) + shifty,
+				    NO_OF_PERIODS + (3 * track_rows) + shifty,
 				    B_WHITE, F_BLACK, B_BLACK, 1, 0, 1,
 				    raw);
 			getColorScheme(counterElement, &bcol, &fcol,
@@ -666,7 +675,7 @@ for (i = 0; i < TABLESIZE; i++) {
 					    shifty,
 					    centerTableX + 5 +
 					    track_columns,
-					    7 + (3 * track_rows) +
+					    NO_OF_PERIODS + (3 * track_rows) +
 					    shifty, B_BLUE, FH_WHITE,
 					    B_BLACK, 1, 0, 0, 0);
 				write_str(screen1,
@@ -686,7 +695,7 @@ for (i = 0; i < TABLESIZE; i++) {
 				lastY1 = 5 + (3 * track_rows) + shifty;
 				lastX2 =
 				    centerTableX + 5 + track_columns;
-				lastY2 = 7 + (3 * track_rows) + shifty;
+				lastY2 = NO_OF_PERIODS + (3 * track_rows) + shifty;
 				oldPointer = i;
 				oldElement = counterElement;
 				write_str(screen1, 0, 3,
@@ -753,21 +762,21 @@ void _resizeScreen(void)
 			//Window size is too small display error message
 			
 			draw_screen();
-			/*draw_window(screen1, (new_columns / 2) - 13,
-				    (new_rows / 2) - 2, (new_columns / 2) + 13,
-				    (new_rows / 2) + 2, B_WHITE, F_BLACK, B_RED,
+			/*draw_window(screen1, (A_HALF_OF(new_columns)) - 13,
+				    (A_HALF_OF(new_rows)) - 2, (A_HALF_OF(new_columns)) + 13,
+				    (A_HALF_OF(new_rows)) + 2, B_WHITE, F_BLACK, B_RED,
 				    1, 1, 1, 0);
-			write_str(screen1, (new_columns / 2) - 12,
-				  (new_rows / 2) - 2, WINERRMSGTL, B_RED,
+			write_str(screen1, (A_HALF_OF(new_columns)) - 12,
+				  (A_HALF_OF(new_rows)) - 2, WINERRMSGTL, B_RED,
 				  F_WHITE, 0);
-			write_str(screen1, (new_columns / 2) - 12,
-				  (new_rows / 2) - 1, WINERRMSGLN1, B_WHITE,
+			write_str(screen1, (A_HALF_OF(new_columns)) - 12,
+				  (A_HALF_OF(new_rows)) - 1, WINERRMSGLN1, B_WHITE,
 				  F_BLACK, 0);
-			write_str(screen1, (new_columns / 2) - 12,
-				  (new_rows / 2), WINERRMSGLN2, B_WHITE,
+			write_str(screen1, (A_HALF_OF(new_columns)) - 12,
+				  (A_HALF_OF(new_rows)), WINERRMSGLN2, B_WHITE,
 				  F_BLACK, 0);
-			write_str(screen1, (new_columns / 2) - 12,
-				  (new_rows / 2) + 1, WINERRMSGLN3, B_WHITE,
+			write_str(screen1, (A_HALF_OF(new_columns)) - 12,
+				  (A_HALF_OF(new_rows)) + 1, WINERRMSGLN3, B_WHITE,
 				  F_BLACK, 0);
 			dump_screen(screen1);
 			displaytable = FALSE;
@@ -811,16 +820,16 @@ int displayHelp()
 	scrollData.selectorLimit = (26 * 2) - 1;	//No. of chars per item display
 	create_screen(&screen2);
 	copy_screen(screen2, screen1);
-	draw_window(screen1, (new_columns / 2) - 26, (new_rows / 2) - 8,
-		    (new_columns / 2) + 26, (new_rows) / 2 + 8, B_CYAN, F_BLACK,
+	draw_window(screen1, (A_HALF_OF(new_columns)) - 26, (A_HALF_OF(new_rows)) - 8,
+		    (A_HALF_OF(new_columns)) + 26, (new_rows) / 2 + 8, B_CYAN, F_BLACK,
 		    B_WHITE, 1, 0, 1, 0);
-	write_str(screen1, (new_columns / 2) - 1, (new_rows / 2) + 7, "[OK]",
+	write_str(screen1, (A_HALF_OF(new_columns)) - 1, (A_HALF_OF(new_rows)) + NO_OF_PERIODS, "[OK]",
 		  B_WHITE, F_BLACK, 1);
 	dump_screen(screen1);
 	addItems(&listBox1, help, HELPLINES);
 	if (listBox1 != NULL)
-		ch = listBox(listBox1, (new_columns / 2) - 24,
-			     (new_rows / 2) - 7, &scrollData, B_CYAN, F_BLACK,
+		ch = listBox(listBox1, (A_HALF_OF(new_columns)) - 24,
+			     (A_HALF_OF(new_rows)) - NO_OF_PERIODS, &scrollData, B_CYAN, F_BLACK,
 			     B_CYAN, FH_WHITE, 14, LOCKED);
 	copy_screen(screen1, screen2);
 	if (screen2 != NULL)
@@ -842,19 +851,19 @@ int displayAbout()
 	create_screen(&screen2);
 	copy_screen(screen2, screen1);
 
-	window(screen1, (new_columns / 2) - 28, (new_rows / 2) - 6,
-	       (new_columns / 2) + 27, (new_rows) / 2 + 5, B_YELLOW, F_BLACK,
+	window(screen1, (A_HALF_OF(new_columns)) - 28, (A_HALF_OF(new_rows)) - 6,
+	       (A_HALF_OF(new_columns)) + 27, (new_rows) / 2 + 5, B_YELLOW, F_BLACK,
 	       B_WHITE, 1, 0, 1);
 	for (i = 0; i < 6; i++) {
-		write_str(screen1, (new_columns / 2) - 27,
-			  (new_rows / 2) - 5 + i, aboutMSG[i], B_YELLOW,
+		write_str(screen1, (A_HALF_OF(new_columns)) - 27,
+			  (A_HALF_OF(new_rows)) - 5 + i, aboutMSG[i], B_YELLOW,
 			  F_BLACK, 0);
 	}
-	write_str(screen1, (new_columns / 2) - 25, (new_rows / 2) + 1,
+	write_str(screen1, (A_HALF_OF(new_columns)) - 25, (A_HALF_OF(new_rows)) + 1,
 		  aboutMSG[6], B_YELLOW, F_BLACK, 0);
-	write_str(screen1, (new_columns / 2) - 25, (new_rows / 2) + 2,
-		  aboutMSG[7], B_YELLOW, F_BLACK, 0);
-	write_str(screen1, (new_columns / 2) - 1, (new_rows / 2) + 4, "[OK]",
+	write_str(screen1, (A_HALF_OF(new_columns)) - 25, (A_HALF_OF(new_rows)) + 2,
+		  aboutMSG[NO_OF_PERIODS], B_YELLOW, F_BLACK, 0);
+	write_str(screen1, (A_HALF_OF(new_columns)) - 1, (A_HALF_OF(new_rows)) + 4, "[OK]",
 		  B_WHITE, F_BLACK, 1);
 	dump_screen(screen1);
 	if (kbhit(100) == 1)
@@ -865,8 +874,8 @@ int displayAbout()
 		keypressed = kbhit(10);
 		if (timerC(&timer3) == TRUE) {
 			//About animation            
-			write_str(screen1, (new_columns / 2) - 27,
-				  (new_rows / 2) - 5 + i, aboutMSG[i], B_YELLOW,
+			write_str(screen1, (A_HALF_OF(new_columns)) - 27,
+				  (A_HALF_OF(new_rows)) - 5 + i, aboutMSG[i], B_YELLOW,
 				  colAnimation, 1);
 			i++;
 			if (i == 6) {
@@ -911,20 +920,20 @@ int displayColorKey()
 	create_screen(&screen2);
 	copy_screen(screen2, screen1);
 	scrollData.selectorLimit = 4;	//No. of chars per item display
-	window(screen1, (new_columns / 2) - 11, (new_rows / 2) - 6,
-	       (new_columns / 2) + 12, (new_rows) / 2 + 6, B_WHITE, F_BLACK,
+	window(screen1, (A_HALF_OF(new_columns)) - 11, (A_HALF_OF(new_rows)) - 6,
+	       (A_HALF_OF(new_columns)) + 12, (new_rows) / 2 + 6, B_WHITE, F_BLACK,
 	       B_BLUE, 1, 1, 1);
 	for (int i = 0; i < 10; i++) {
 		getColorScheme(i, &bcol, &fcol, TRUE);
-		write_str(screen1, (new_columns / 2) - 10,
-			  (new_rows / 2) - 5 + i, colorKey[i], bcol, fcol, 0);
+		write_str(screen1, (A_HALF_OF(new_columns)) - 10,
+			  (A_HALF_OF(new_rows)) - 5 + i, colorKey[i], bcol, fcol, 0);
 	}
-	write_str(screen1, (new_columns / 2) - 11, (new_rows / 2) - 7,
+	write_str(screen1, (A_HALF_OF(new_columns)) - 11, (A_HALF_OF(new_rows)) - NO_OF_PERIODS,
 		  "[+] COLOR KEY", B_BLUE, FH_WHITE, 0);
 	dump_screen(screen1);
 	listBox1 = addatend(listBox1, newitem("[OK]"));
 	if (listBox1 != NULL)
-		ch = listBox(listBox1, (new_columns / 2), (new_rows / 2) + 5,
+		ch = listBox(listBox1, (A_HALF_OF(new_columns)), (A_HALF_OF(new_rows)) + 5,
 			     &scrollData, B_CYAN, F_BLACK, B_CYAN, FH_WHITE, 1,
 			     LOCKED);
 	copy_screen(screen1, screen2);
@@ -946,10 +955,10 @@ int displayList()
 	scrollData.selectorLimit = (14 * 2) - 3;	//No. of chars per item display
 	create_screen(&screen2);
 	copy_screen(screen2, screen1);
-	window(screen1, (new_columns / 2) - 14, (new_rows / 2) - (noItems/2) -1,
-		    (new_columns / 2) + 14, (new_rows) / 2 + (noItems/2) +1, B_CYAN,
+	window(screen1, (A_HALF_OF(new_columns)) - 14, (A_HALF_OF(new_rows)) - (noItems/2) -1,
+		    (A_HALF_OF(new_columns)) + 14, (new_rows) / 2 + (noItems/2) +1, B_CYAN,
 		    FH_WHITE, B_BLACK, 1, 0, 1);
-	//write_str(screen1, (new_columns / 2) - 9, (new_rows / 2) + 11,
+	//write_str(screen1, (A_HALF_OF(new_columns)) - 9, (A_HALF_OF(new_rows)) + 11,
 		//  "Press [x] to close", B_CYAN, FH_WHITE, 1);
 	// dump_screen(screen1); 
 	// addItems(&listBox1, elementNames, NUMELEMENTS);
@@ -961,8 +970,8 @@ int displayList()
 		addItems(&listBox1, elementNames, NUMELEMENTS);
 		dump_screen(screen1);
 		if (listBox1 != NULL)
-			ch = listBox(listBox1, (new_columns / 2) - 11,
-				     (new_rows / 2) - (noItems/2), &scrollData, B_CYAN,
+			ch = listBox(listBox1, (A_HALF_OF(new_columns)) - 11,
+				     (A_HALF_OF(new_rows)) - (noItems/2), &scrollData, B_CYAN,
 				     F_BLACK, B_BLUE, FH_WHITE, noItems, LOCKED);
 		if (scrollData.itemIndex == -1)
 			break;
@@ -987,10 +996,10 @@ int displayInfo()
 	scrollData.selectorLimit = (11 * 2);	//No. of chars per item display
 	create_screen(&screen2);
 	copy_screen(screen2, screen1);
-	window(screen1, (new_columns / 2) - 11, (new_rows / 2) - 6,
-	       (new_columns / 2) + 12, (new_rows) / 2 + 6, B_WHITE, F_BLACK,
+	window(screen1, (A_HALF_OF(new_columns)) - 11, (A_HALF_OF(new_rows)) - 6,
+	       (A_HALF_OF(new_columns)) + 12, (new_rows) / 2 + 6, B_WHITE, F_BLACK,
 	       B_BLUE, 1, 0, 1);
-	write_str(screen1, (new_columns / 2) - 9, (new_rows / 2) + 5,
+	write_str(screen1, (A_HALF_OF(new_columns)) - 9, (A_HALF_OF(new_rows)) + 5,
 		  "Press [x] to close", B_CYAN, FH_WHITE, 1);
 	dump_screen(screen1);
 	do {
@@ -1000,8 +1009,8 @@ int displayInfo()
 		addItems(&listBox1, colorKey, 10);
 
 		if (listBox1 != NULL)
-			ch = listBox(listBox1, (new_columns / 2) - 9,
-				     (new_rows / 2) - 5, &scrollData, B_WHITE,
+			ch = listBox(listBox1, (A_HALF_OF(new_columns)) - 9,
+				     (A_HALF_OF(new_rows)) - 5, &scrollData, B_WHITE,
 				     F_BLACK, B_BLUE, FH_WHITE, 10, LOCKED);
 		if (scrollData.itemIndex == -1)
 			break;
@@ -1019,7 +1028,7 @@ int displayInfo()
 
 int displayText(SCREENCELL *aux, char *text)
 {
-	char lineStr[255];
+	char lineStr[MAXLINE];
 	int strPtr = 0;
 	char ch = 0;
 	int k = 0;
@@ -1030,18 +1039,18 @@ int displayText(SCREENCELL *aux, char *text)
 		removeList(&listBox1);
 	create_screen(&screen3);
 	copy_screen(screen3, aux);
-	window(aux, (new_columns / 2) - 22, (new_rows / 2) - 7,
-	       (new_columns / 2) + 22, (new_rows / 2) + 7, B_WHITE, F_BLUE,
+	window(aux, (A_HALF_OF(new_columns)) - 22, (A_HALF_OF(new_rows)) - NO_OF_PERIODS,
+	       (A_HALF_OF(new_columns)) + 22, (A_HALF_OF(new_rows)) + NO_OF_PERIODS, B_WHITE, F_BLUE,
 	       B_BLACK, 1, 0, 1);
-	window(aux, (new_columns / 2) - 21, (new_rows / 2) - 6,
-	       (new_columns / 2) + 21, (new_rows / 2) + 6, B_WHITE, F_BLACK,
+	window(aux, (A_HALF_OF(new_columns)) - 21, (A_HALF_OF(new_rows)) - 6,
+	       (A_HALF_OF(new_columns)) + 21, (A_HALF_OF(new_rows)) + 6, B_WHITE, F_BLACK,
 	       B_BLUE, 1, 1, 0);
-	window(aux, (new_columns / 2) - 20, (new_rows / 2) - 5,
-	       (new_columns / 2) + 20, (new_rows / 2) + 5, B_WHITE, FH_WHITE,
+	window(aux, (A_HALF_OF(new_columns)) - 20, (A_HALF_OF(new_rows)) - 5,
+	       (A_HALF_OF(new_columns)) + 20, (A_HALF_OF(new_rows)) + 5, B_WHITE, FH_WHITE,
 	       B_BLACK, 0, 0, 0);
-	write_str(aux, (new_columns / 2) - 22, (new_rows / 2) - 7,
+	write_str(aux, (A_HALF_OF(new_columns)) - 22, (A_HALF_OF(new_rows)) - NO_OF_PERIODS,
 		  "[+] INFORMATION", B_BLUE, FH_WHITE, 1);
-	write_str(aux, (new_columns / 2) - 1, (new_rows / 2) + 5, "[OK]",
+	write_str(aux, (A_HALF_OF(new_columns)) - 1, (A_HALF_OF(new_rows)) + 5, "[OK]",
 		  B_CYAN, FH_WHITE, 1);
 	dump_screen(aux);
 	resetScrollData();
@@ -1083,8 +1092,8 @@ int displayText(SCREENCELL *aux, char *text)
 
 	scrollData.selectorLimit = 39;	//No. of chars per item displayed
 	if (listBox1 != NULL)
-		ch = listBox(listBox1, (new_columns / 2) - 18,
-			     (new_rows / 2) - 5, &scrollData, B_WHITE, F_BLACK,
+		ch = listBox(listBox1, (A_HALF_OF(new_columns)) - 18,
+			     (A_HALF_OF(new_rows)) - 5, &scrollData, B_WHITE, F_BLACK,
 			     B_WHITE, F_BLUE, 10, LOCKED);
 	copy_screen(aux, screen3);
 	if (screen3 != NULL)
@@ -1104,10 +1113,10 @@ int displaySearch()
 	char ch = 0;
 	create_screen(&screen2);
 	copy_screen(screen2, screen1);
-	window(screen1, (new_columns / 2) - 13, (new_rows / 2) - 1,
-	       (new_columns / 2) + 14, (new_rows) / 2 + 1, B_BLUE, FH_WHITE,
+	window(screen1, (A_HALF_OF(new_columns)) - 13, (A_HALF_OF(new_rows)) - 1,
+	       (A_HALF_OF(new_columns)) + 14, (new_rows) / 2 + 1, B_BLUE, FH_WHITE,
 	       B_BLUE, 1, 0, 1);
-	ch = textbox(screen1, (new_columns / 2) - 12, (new_rows / 2), 15,
+	ch = textbox(screen1, (A_HALF_OF(new_columns)) - 12, (A_HALF_OF(new_rows)), 15,
 		     "Element: ", texto, B_BLUE, FH_WHITE, FH_WHITE, FALSE,
 		     LOCKED);
 	dump_screen(screen1);
@@ -1137,20 +1146,20 @@ int displaySearch()
 		strcpy(lowercase, "\0");
 	}
 	if ((!elementFound) && (strlen(texto) > 0)) {
-		draw_window(screen1, (new_columns / 2) - 13, (new_rows / 2) - 2,
-			    (new_columns / 2) + 13, (new_rows / 2) + 2, B_WHITE,
+		draw_window(screen1, (A_HALF_OF(new_columns)) - 13, (A_HALF_OF(new_rows)) - 2,
+			    (A_HALF_OF(new_columns)) + 13, (A_HALF_OF(new_rows)) + 2, B_WHITE,
 			    F_BLACK, B_RED, 1, 1, 1, 0);
-		write_str(screen1, (new_columns / 2) - 12, (new_rows / 2) - 2,
+		write_str(screen1, (A_HALF_OF(new_columns)) - 12, (A_HALF_OF(new_rows)) - 2,
 			  "[+] ERROR", B_RED, FH_WHITE, 0);
-		write_str(screen1, (new_columns / 2) - 12, (new_rows / 2),
+		write_str(screen1, (A_HALF_OF(new_columns)) - 12, (A_HALF_OF(new_rows)),
 			  "    Element not found!", B_WHITE, F_BLACK, 0);
 		dump_screen(screen1);
 		resetScrollData();
 		scrollData.selectorLimit = 4;	//No. of chars per item display
 		listBox1 = addatend(listBox1, newitem("[OK]"));
 		if (listBox1 != NULL)
-			ch = listBox(listBox1, (new_columns / 2),
-				     (new_rows / 2) + 1, &scrollData, B_WHITE,
+			ch = listBox(listBox1, (A_HALF_OF(new_columns)),
+				     (A_HALF_OF(new_rows)) + 1, &scrollData, B_WHITE,
 				     F_BLACK, B_CYAN, FH_WHITE, 1, LOCKED);
 	}
 	copy_screen(screen1, screen2);
@@ -1238,12 +1247,12 @@ int getElementfromFile(char *text, int elementNumber)
 		//file not found; display error message and exit function
 		create_screen(&screen2);
 		copy_screen(screen2, screen1);
-		draw_window(screen1, (new_columns / 2) - 13, (new_rows / 2) - 2,
-			    (new_columns / 2) + 13, (new_rows / 2) + 2, B_WHITE,
+		draw_window(screen1, (A_HALF_OF(new_columns)) - 13, (A_HALF_OF(new_rows)) - 2,
+			    (A_HALF_OF(new_columns)) + 13, (A_HALF_OF(new_rows)) + 2, B_WHITE,
 			    F_BLACK, B_RED, 1, 1, 1, 0);
-		write_str(screen1, (new_columns / 2) - 12, (new_rows / 2) - 2,
+		write_str(screen1, (A_HALF_OF(new_columns)) - 12, (A_HALF_OF(new_rows)) - 2,
 			  "[+] ERROR", B_RED, FH_WHITE, 0);
-		write_str(screen1, (new_columns / 2) - 12, (new_rows / 2),
+		write_str(screen1, (A_HALF_OF(new_columns)) - 12, (A_HALF_OF(new_rows)),
 			  "    File not found!", B_WHITE, F_BLACK, 0);
 		dump_screen(screen1);
 		resetScrollData();
@@ -1251,8 +1260,8 @@ int getElementfromFile(char *text, int elementNumber)
 		listBox1 = addatend(listBox1, newitem("[OK]"));
 		copy_screen(screen1, screen2);
 		if (listBox1 != NULL)
-			ch = listBox(listBox1, (new_columns / 2),
-				     (new_rows / 2) + 1, &scrollData, B_WHITE,
+			ch = listBox(listBox1, (A_HALF_OF(new_columns)),
+				     (A_HALF_OF(new_rows)) + 1, &scrollData, B_WHITE,
 				     F_BLACK, B_CYAN, FH_WHITE, 1, LOCKED);
 		if (screen2 != NULL)
 			deleteList(&screen2);
